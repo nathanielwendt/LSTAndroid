@@ -41,7 +41,7 @@ public class DBPrepare {
             String[] split = line.split(" ");
             STPoint point = new STPoint(Float.valueOf(split[0]),Float.valueOf(split[1]),Float.valueOf(split[2]));
 
-            int count = 0;
+            int count = 1;
             insertPoint(structs, point);
             while (((line = br.readLine()) != null) && count < num) {
                 split = line.split(" ");

@@ -106,7 +106,7 @@ public class SQLiteRTree extends SQLiteOpenHelper implements STStorage {
 
         List<STPoint> points = cursorToList(cur);
         Log.d("LST", query);
-        Log.d("LST", "" + points.size());
+        Log.d("LST", "result size >> " + points.size());
         db.close();
         return points;
     }

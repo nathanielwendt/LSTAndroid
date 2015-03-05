@@ -19,9 +19,10 @@ public class BaseRunActivity extends Activity {
         if(extras != null){
             String evalClassName = extras.getString("eval");
             try {
+                System.out.println(extras.size());
                 Object newObject = Class.forName("com.example.nathanielwendt.lstrtree.evals." + evalClassName).newInstance();
-                if(extras.containsKey("options")){
-                    ((Eval) newObject).execute(this, extras.getString("options"));
+                if(extras.size() > 1){
+                    ((Eval) newObject).execute(this, extras);
                 } else {
                     ((Eval) newObject).execute(this);
                 }

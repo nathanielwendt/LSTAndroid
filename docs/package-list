@@ -1,0 +1,10 @@
+com.example.nathanielwendt.lstrtree
+com.example.nathanielwendt.lstrtree.benchmark
+com.example.nathanielwendt.lstrtree.evals
+com.ut.mpc.kdtree
+com.ut.mpc.nativewrapper
+com.ut.mpc.setup
+com.ut.mpc.utils
+com.ut.mpc.workload
+org.sqlite.database
+org.sqlite.database.sqlite

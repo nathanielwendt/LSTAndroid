@@ -1,24 +1,30 @@
 package com.example.nathanielwendt.lstrtree.evals;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.util.Log;
 
 import com.example.nathanielwendt.lstrtree.SQLiteRTree;
-import com.example.nathanielwendt.lstrtree.benchmark.DBPrepare;
 import com.ut.mpc.utils.LSTFilter;
+import com.ut.mpc.utils.STRegion;
 
-public class WindowQuery1 implements Eval {
+/**
+ * Gets size of current database
+ */
+public class SizeDB implements Eval {
 
     @Override
-    public void execute(Context ctx, String options){
+    public void execute(Context ctx, Bundle options){
         SQLiteRTree helper = new SQLiteRTree(ctx, "RTreeMain");
         LSTFilter lstFilter = new LSTFilter(helper);
 
-        DBPrepare.populateDB(lstFilter, "/sdcard/Crawdad/" + options, 1000);
+        STRegion bounds = helper.getBoundingBox();
+        Log.d("LST", "size of db is" + lstFilter.getSize());
     }
 
     @Override
     public void execute(Context ctx){
-        execute(ctx, "new_abboip.txt");
+        execute(ctx,  null);
     }
 
 }
