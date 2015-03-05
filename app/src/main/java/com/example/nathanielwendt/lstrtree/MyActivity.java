@@ -34,6 +34,9 @@ public class MyActivity extends Activity {
 //        double val = lstFilter.windowPoK(region);
 //        Log.d("LST", "window PoK >> " + val);
 
+
+
+        
         setContentView(R.layout.activity_my);
     }
 
