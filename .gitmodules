@@ -1,0 +1,3 @@
+[submodule "app/LSTFilter"]
+	path = app/LSTFilter
+	url = https://github.com/nathanielwendt/LSTFilter.git
