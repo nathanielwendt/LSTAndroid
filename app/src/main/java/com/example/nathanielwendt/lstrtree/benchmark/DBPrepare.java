@@ -39,13 +39,13 @@ public class DBPrepare {
             String line;
             line = br.readLine();
             String[] split = line.split(" ");
-            STPoint point = new STPoint(Float.valueOf(split[0]),Float.valueOf(split[1]),Float.valueOf(split[3]));
+            STPoint point = new STPoint(Float.valueOf(split[1]),Float.valueOf(split[0]),Float.valueOf(split[3]));
 
             int count = 1;
             insertPoint(structs, point);
             while (((line = br.readLine()) != null) && count < num) {
                 split = line.split(" ");
-                point = new STPoint(Float.valueOf(split[0]),Float.valueOf(split[1]),Float.valueOf(split[3]));
+                point = new STPoint(Float.valueOf(split[1]),Float.valueOf(split[0]),Float.valueOf(split[3]));
                 insertPoint(structs, point);
                 count++;
             }
