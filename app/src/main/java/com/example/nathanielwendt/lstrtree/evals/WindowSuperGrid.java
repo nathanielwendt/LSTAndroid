@@ -11,15 +11,24 @@ import com.ut.mpc.utils.STRegion;
 import java.util.ArrayList;
 import java.util.List;
 
+import profiler.MultiProfiler;
+
 /**
  * Basic window query operation
  * <li>numGrid - number of grids along each dimension</li>
  */
 public class WindowSuperGrid implements Eval {
 
+    private static final String TAG = SampleEval.class.getSimpleName();
+
     @Override
     public void execute(Context ctx, Bundle options){
         int numGrid = Integer.valueOf(options.getString("numGrid"));
+
+        String pref = options.getString("pref");
+        if (pref == null) {
+            pref = "normal.pref";
+        }
 
         SQLiteRTree helper = new SQLiteRTree(ctx, "RTreeMain");
         LSTFilter lstFilter = new LSTFilter(helper);
@@ -33,6 +42,13 @@ public class WindowSuperGrid implements Eval {
         float tStep = (maxBounds.getT() - minBounds.getT()) / numGrid;
 
         List<Double> results = new ArrayList<Double>();
+
+        MultiProfiler.init(this, ctx);
+        MultiProfiler.loadPrefs("/sdcard/trepn/saved_preferences/"+pref);
+        MultiProfiler.startProfiling(TAG);
+
+        MultiProfiler.startMark(TAG);
+
         for(float x = minBounds.getX(); x < maxBounds.getX(); x+= xStep){
             for(float y = minBounds.getY(); y < maxBounds.getY(); y+= yStep){
                 for(float t = minBounds.getT(); t < maxBounds.getT(); t+= tStep) {
@@ -41,6 +57,10 @@ public class WindowSuperGrid implements Eval {
                 }
             }
         }
+
+        MultiProfiler.endMark(TAG);
+
+        MultiProfiler.stopProfiling();
 
         for(Double result : results){
             System.out.println(result);
