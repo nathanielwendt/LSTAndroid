@@ -2,6 +2,7 @@ package com.example.nathanielwendt.lstrtree.evals;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.nathanielwendt.lstrtree.SQLiteRTree;
 import com.example.nathanielwendt.lstrtree.benchmark.DBPrepare;
@@ -23,6 +24,8 @@ public class InsertData implements Eval {
         LSTFilter lstFilter = new LSTFilter(helper);
 
         DBPrepare.populateDB(lstFilter, "/sdcard/Crawdad/" + fileName, numPoints, DBPrepare.smartInsOffVal);
+
+        Log.d(TAG, "Populated Database with size: " + helper.getSize());
     }
 
     @Override

@@ -19,11 +19,9 @@ import profiler.Stabilizer;
  * Basic window query operation
  * <li>numGrid - number of grids along each dimension</li>
  */
-public class WindowSuperGrid implements Eval, Stabilizer {
+public class WindowSuperGrid implements Eval {
 
-    private static final String TAG = SampleEval.class.getSimpleName();
-    private static STRegion firstRun;
-    private static LSTFilter lstFilter;
+    private static final String TAG = WindowSuperGrid.class.getSimpleName();
 
     @Override
     public void execute(Context ctx, Bundle options){
@@ -35,25 +33,32 @@ public class WindowSuperGrid implements Eval, Stabilizer {
         }
 
         SQLiteRTree helper = new SQLiteRTree(ctx, "RTreeMain");
-        lstFilter = new LSTFilter(helper);
+        final LSTFilter lstFilter = new LSTFilter(helper);
 
         STRegion bounds = helper.getBoundingBox();
         STPoint minBounds = bounds.getMins();
         STPoint maxBounds = bounds.getMaxs();
 
-        firstRun = new STRegion(new STPoint(minBounds.getX(),minBounds.getY(),minBounds.getT()), new STPoint(minBounds.getX(),minBounds.getY(),minBounds.getT()));
+        final STRegion firstRun = new STRegion(new STPoint(minBounds.getX(),minBounds.getY(),minBounds.getT()), new STPoint(minBounds.getX(),minBounds.getY(),minBounds.getT()));
 
-        float spaceGrid = 10;
-        float timeGrid = 1000 * 60 * 60 * 6;
+        float spaceGrid = 10; // 10 km
+        float timeGrid = 1000 * 60 * 60 * 6; // 6 hours
         STPoint cube = new STPoint(GPSLib.longOffsetFromDistance(minBounds, spaceGrid), GPSLib.latOffsetFromDistance(minBounds, spaceGrid), timeGrid);
         float xStep = cube.getX();
         float yStep = cube.getY();
         float tStep = cube.getT();
 
+        Stabilizer stabFunc = new Stabilizer(){
+            @Override
+            public void task(Object data) {
+                lstFilter.windowPoK(firstRun);
+            }
+        };
+
         MultiProfiler.init(this, ctx);
         MultiProfiler.startProfiling(TAG);
         for(int i = 0; i < 10; i++){
-            MultiProfiler.startMark(TAG);
+            MultiProfiler.startMark(stabFunc, null, TAG);
             for(float x = minBounds.getX(); x < maxBounds.getX(); x+= xStep){
                 for(float y = minBounds.getY(); y < maxBounds.getY(); y+= yStep){
                     for(float t = minBounds.getT(); t < maxBounds.getT(); t+= tStep) {
@@ -76,7 +81,7 @@ public class WindowSuperGrid implements Eval, Stabilizer {
                 }
             }
         }
-
+        System.out.println("DONE PROFILING >>>>>>>");
         System.out.println(poks);
         System.out.println(numCandPoints);
     }
@@ -86,10 +91,5 @@ public class WindowSuperGrid implements Eval, Stabilizer {
         Bundle options = new Bundle();
         options.putString("numGrid", "10");
         execute(ctx, options);
-    }
-
-    @Override
-    public void task() {
-        lstFilter.windowPoK(firstRun);
     }
 }

@@ -1,6 +1,5 @@
 package profiler;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -10,7 +9,6 @@ import com.example.nathanielwendt.lstrtree.evals.Eval;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
 
 /**
  * Created by Aurelius on 3/4/15.
@@ -62,6 +60,11 @@ public class MultiProfiler {
         Log.d(TAG, "dB full name: "+dbFullName);
         createDatabase.putExtra("com.quicinc.trepn.database_file", dbFullName);
         appContext.sendBroadcast(createDatabase);
+        try {
+            Thread.sleep(7000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void stopProfiling() {
