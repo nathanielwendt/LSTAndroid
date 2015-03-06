@@ -13,12 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import profiler.MultiProfiler;
+import profiler.Stabilizer;
 
 /**
  * Basic window query operation
  * <li>numGrid - number of grids along each dimension</li>
  */
-public class WindowSuperGrid implements Eval, MultiProfiler.Stabilizer {
+public class WindowSuperGrid implements Eval, Stabilizer {
 
     private static final String TAG = SampleEval.class.getSimpleName();
     private static STRegion firstRun;
