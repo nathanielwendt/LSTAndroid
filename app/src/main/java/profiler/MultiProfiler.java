@@ -20,7 +20,7 @@ public class MultiProfiler {
     private static final int stabilizeThresh = 10; // in ms
     private static final int minCount = 10; // in iterations
     private static Context appContext;
-    private static Stabilizer mStabilizer;
+    //private static Stabilizer mStabilizer;
 
     private static final String TAG = MultiProfiler.class.getSimpleName();
 
@@ -31,7 +31,7 @@ public class MultiProfiler {
     }
 
     public static void init(Eval testClass, Context testContext) {
-        mStabilizer = (Stabilizer) testClass;
+        //mStabilizer = (Stabilizer) testClass;
         appContext =  testContext;
         Intent trepn = new Intent();
         String model= Build.MODEL;
@@ -46,12 +46,15 @@ public class MultiProfiler {
         // Start Trepn
         trepn.setClassName("com.quicinc.trepn", "com.quicinc.trepn.TrepnService");
         appContext.startService(trepn);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void startProfiling(String dbName) {
-
-        // stabilize before running profiler
-        stabilizeTask();
 
         Intent createDatabase = new Intent("com.quicinc.trepn.start_profiling");
         String timeAndDate = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date());
@@ -66,13 +69,9 @@ public class MultiProfiler {
         appContext.sendBroadcast(stopProfiling);
     }
 
-    public static int startMark(String desc) {
+    public static int startMark(Stabilizer mStabilizer, Object data, String desc) {
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        stabilizeTask(mStabilizer, data);
         Intent trepn = new Intent("com.quicinc.Trepn.UpdateAppState");
         int trepnStartCode = Math.abs(desc.hashCode() % 1000);
         trepn.putExtra("com.quicinc.Trepn.UpdateAppState.Value", trepnStartCode);
@@ -109,7 +108,7 @@ public class MultiProfiler {
         }
     }
 
-    public static void stabilizeTask() {
+    public static void stabilizeTask(Stabilizer mStabilizer, Object data) {
         long startTime = 0;
         long endTime = 1000000;
         long execTime = 0;
@@ -118,7 +117,7 @@ public class MultiProfiler {
         long avg = 0;
         do {
             startTime = System.currentTimeMillis();
-            mStabilizer.task();
+            mStabilizer.task(data);
             endTime = System.currentTimeMillis();
             execTime = endTime - startTime;
             runningSum += execTime;
@@ -131,10 +130,5 @@ public class MultiProfiler {
 
     }
 
-    public interface Stabilizer {
-
-        public void task();
-
-    }
-
 }
+

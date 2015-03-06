@@ -8,7 +8,7 @@ import profiler.*;
 /**
  * Created by Aurelius on 3/5/15.
  */
-public class SampleEval implements Eval, MultiProfiler.Stabilizer {
+public class SampleEval implements Eval {
 
     private static final String TAG = SampleEval.class.getSimpleName();
 
@@ -16,25 +16,50 @@ public class SampleEval implements Eval, MultiProfiler.Stabilizer {
     public void execute(Context ctx, Bundle options) {
         Log.d(TAG, "::execute");
         MultiProfiler.init(this, ctx);
-        MultiProfiler.loadPrefs("/sdcard/trepn/saved_preferences/testPref.pref");
+        //MultiProfiler.loadPrefs("/sdcard/trepn/saved_preferences/normal.pref");
         MultiProfiler.startProfiling("sampleTest");
 
-        MultiProfiler.startMark("randomLoop");
+        MultiProfiler.startMark(new Stabilizer() {
+            @Override
+            public void task(Object data) {
+                // sample test here
+                long squareSum = 0;
+                for (int i=0 ; i<10000000; ++i) {
+                    squareSum += i*i;
+                }
+            }
+        }, null, TAG);
 
         long squareSum = 0;
-        for (int i=0; i<1000000000; ++i) {
+        for (int i=0 ; i<10000000; ++i) {
             squareSum += i*i;
         }
-        MultiProfiler.endMark("randomLoop");
 
-        MultiProfiler.startMark("randomLoop2");
+        MultiProfiler.endMark(TAG);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        MultiProfiler.startMark(new Stabilizer() {
+            @Override
+            public void task(Object data) {
+                // sample test here
+                long squareSum = 0;
+                for (int i=0 ; i<10000000; ++i) {
+                    squareSum += i*i;
+                }
+            }
+        }, null, TAG);
 
         squareSum = 0;
-        for (int i=0; i<1000000000; ++i) {
+        for (int i=0 ; i<10000000; ++i) {
             squareSum += i*i;
         }
 
-        MultiProfiler.endMark("randomLoop2");
+        MultiProfiler.endMark(TAG);
 
         MultiProfiler.stopProfiling();
 
@@ -46,12 +71,4 @@ public class SampleEval implements Eval, MultiProfiler.Stabilizer {
         execute(ctx, null);
     }
 
-    @Override
-    public void task() {
-        // sample test here
-        long squareSum = 0;
-        for (int i=0 ; i<10000000; ++i) {
-            squareSum += i*i;
-        }
-    }
 }
