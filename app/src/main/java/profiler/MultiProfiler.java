@@ -1,13 +1,16 @@
 package profiler;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import com.example.nathanielwendt.lstrtree.evals.Eval;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 
 /**
  * Created by Aurelius on 3/4/15.
@@ -17,7 +20,7 @@ public class MultiProfiler {
     private static final int stabilizeThresh = 10; // in ms
     private static final int minCount = 10; // in iterations
     private static Context appContext;
-    private static Stabilizer mStabilizer;
+    //private static Stabilizer mStabilizer;
 
     private static final String TAG = MultiProfiler.class.getSimpleName();
 
@@ -28,21 +31,22 @@ public class MultiProfiler {
     }
 
     public static void init(Eval testClass, Context testContext) {
-        mStabilizer = (Stabilizer) testClass;
+        //mStabilizer = (Stabilizer) testClass;
         appContext =  testContext;
         Intent trepn = new Intent();
         String model= Build.MODEL;
         String serial = Build.SERIAL;
         String modelConcat = model.replaceAll("\\s","");
         String serialStrip = serial.substring(serial.length()-3);
-       // Log.d(TAG, "Model: "+modelConcat);
-       // Log.d(TAG, "Serial: "+serialStrip);
+        Log.d(TAG, "Model: "+modelConcat);
+        Log.d(TAG, "Serial: "+serialStrip);
         deviceLabel = modelConcat+"_"+serialStrip;
 
 
         // Start Trepn
         trepn.setClassName("com.quicinc.trepn", "com.quicinc.trepn.TrepnService");
         appContext.startService(trepn);
+
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -51,10 +55,11 @@ public class MultiProfiler {
     }
 
     public static void startProfiling(String dbName) {
+
         Intent createDatabase = new Intent("com.quicinc.trepn.start_profiling");
         String timeAndDate = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date());
         String dbFullName = dbName+"_"+deviceLabel+"_"+timeAndDate;
-       // Log.d(TAG, "dB full name: "+dbFullName);
+        Log.d(TAG, "dB full name: "+dbFullName);
         createDatabase.putExtra("com.quicinc.trepn.database_file", dbFullName);
         appContext.sendBroadcast(createDatabase);
     }
@@ -64,10 +69,9 @@ public class MultiProfiler {
         appContext.sendBroadcast(stopProfiling);
     }
 
-    public static int startMark(String desc) {
+    public static int startMark(Stabilizer mStabilizer, Object data, String desc) {
 
-        // stabilize before running profiler
-        stabilizeTask();
+        stabilizeTask(mStabilizer, data);
         Intent trepn = new Intent("com.quicinc.Trepn.UpdateAppState");
         int trepnStartCode = Math.abs(desc.hashCode() % 1000);
         trepn.putExtra("com.quicinc.Trepn.UpdateAppState.Value", trepnStartCode);
@@ -104,7 +108,7 @@ public class MultiProfiler {
         }
     }
 
-    public static void stabilizeTask() {
+    public static void stabilizeTask(Stabilizer mStabilizer, Object data) {
         long startTime = 0;
         long endTime = 1000000;
         long execTime = 0;
@@ -113,23 +117,18 @@ public class MultiProfiler {
         long avg = 0;
         do {
             startTime = System.currentTimeMillis();
-            mStabilizer.task();
+            mStabilizer.task(data);
             endTime = System.currentTimeMillis();
             execTime = endTime - startTime;
             runningSum += execTime;
             count++;
             avg = runningSum / count;
-           // Log.d(TAG, "avg: "+ avg);
-           // Log.d(TAG, "execTime: " + execTime);
+            Log.d(TAG, "avg: "+ avg);
+            Log.d(TAG, "execTime: " + execTime);
 
         } while((count < minCount) || (Math.abs(avg - execTime) > stabilizeThresh));
 
     }
 
-    public interface Stabilizer {
-
-        public void task();
-
-    }
-
 }
+
