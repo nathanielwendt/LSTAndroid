@@ -26,16 +26,13 @@ import static com.ut.mpc.setup.Constants.SPATIAL_TYPE;
 //import android.database.sqlite.SQLiteDatabase;
 //import android.database.sqlite.SQLiteOpenHelper;
 
-public class SQLiteRTree extends SQLiteOpenHelper implements STStorage {
+public class SQLiteNaive extends SQLiteOpenHelper implements STStorage {
 
-    static {
-        System.loadLibrary("sqliteX");
-    }
 
     private Context myContext;
     private String table_identifier;
 
-    public SQLiteRTree(Context context, String identifier) {
+    public SQLiteNaive(Context context, String identifier) {
         super(context, context.getDatabasePath(DATABASE_NAME).getPath(), null, DATABASE_VERSION);
         Log.d("LST", context.getDatabasePath(DATABASE_NAME).getPath());
         this.myContext = context;
@@ -248,7 +245,7 @@ public class SQLiteRTree extends SQLiteOpenHelper implements STStorage {
 
     @Override
     public void onCreate(SQLiteDatabase database) {
-        String create_rtree = "CREATE VIRTUAL TABLE " + this.table_identifier + " USING rtree(\n" +
+        String create_rtree = "CREATE TABLE " + this.table_identifier + " (\n" +
                 "   id,              -- Integer primary key\n" +
                 "   minX, maxX,      -- Minimum and maximum X coordinate\n" +
                 "   minY, maxY,       -- Minimum and maximum Y coordinate\n" +
@@ -260,7 +257,7 @@ public class SQLiteRTree extends SQLiteOpenHelper implements STStorage {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.w(SQLiteRTree.class.getName(),
+        Log.w(SQLiteNaive.class.getName(),
                 "Upgrading database from version " + oldVersion + " to "
                         + newVersion + ", which will destroy all old data");
         db.execSQL("DROP TABLE IF EXISTS " + this.table_identifier);
