@@ -10,7 +10,7 @@ import java.io.FileReader;
  * Created by nathanielwendt on 3/4/15.
  */
 public class DBPrepare {
-    private static final double smartInsOffVal = -1;
+    public static final double smartInsOffVal = -1;
 
     public static void populateDB(LSTFilter struct, String fileName, int num, double smartInsThresh) {
         populateDB(new LSTFilter[]{struct}, fileName, num, smartInsThresh);

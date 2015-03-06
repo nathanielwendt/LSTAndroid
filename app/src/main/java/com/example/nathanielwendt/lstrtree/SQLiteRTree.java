@@ -188,7 +188,6 @@ public class SQLiteRTree extends SQLiteOpenHelper implements STStorage {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-
         String query = "SELECT minX FROM " + this.table_identifier + " ORDER BY minX ASC LIMIT 1;";
         float minX = getRowValueHelper(db, query, 0);
         query = "SELECT minY FROM " + this.table_identifier + " ORDER BY minY ASC Limit 1;";
@@ -202,7 +201,13 @@ public class SQLiteRTree extends SQLiteOpenHelper implements STStorage {
         query = "SELECT maxT FROM " + this.table_identifier + " ORDER BY maxT DESC Limit 1;";
         float maxT = getRowValueHelper(db, query, 0);
 
-        return new STRegion(new STPoint(minX, minY, minT), new STPoint(maxX, maxY, maxT));
+        STPoint mins = new STPoint(minX, minY, minT);
+        STPoint maxs = new STPoint(maxX, maxY, maxT);
+        if(Constants.SPATIAL_TYPE == Constants.SpatialType.GPS) {
+            STPoint.add(mins, Constants.NEG_FLOAT_BUDGE);
+            STPoint.add(maxs, Constants.POS_FLOAT_BUDGE);
+        }
+        return new STRegion(mins, maxs);
     }
 
     private float getRowValueHelper(SQLiteDatabase db, String query, int index){

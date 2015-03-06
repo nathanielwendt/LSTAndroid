@@ -25,8 +25,12 @@ public class WindowSuperGrid implements Eval {
         LSTFilter lstFilter = new LSTFilter(helper);
 
         STRegion bounds = helper.getBoundingBox();
+        System.out.println(bounds);
         STPoint minBounds = bounds.getMins();
         STPoint maxBounds = bounds.getMaxs();
+
+        List<STPoint> points = helper.range(bounds);
+        System.out.println("points back is " + points.size());
 
         float xStep = (maxBounds.getX() - minBounds.getX()) / numGrid;
         float yStep = (maxBounds.getY() - minBounds.getY()) / numGrid;

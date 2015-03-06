@@ -22,7 +22,7 @@ public class InsertData implements Eval {
         SQLiteRTree helper = new SQLiteRTree(ctx, "RTreeMain");
         LSTFilter lstFilter = new LSTFilter(helper);
 
-        DBPrepare.populateDB(lstFilter, "/sdcard/Crawdad/" + fileName, numPoints);
+        DBPrepare.populateDB(lstFilter, "/sdcard/Crawdad/" + fileName, numPoints, DBPrepare.smartInsOffVal);
     }
 
     @Override
