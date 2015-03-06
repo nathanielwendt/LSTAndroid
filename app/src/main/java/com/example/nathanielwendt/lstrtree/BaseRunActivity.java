@@ -2,12 +2,15 @@ package com.example.nathanielwendt.lstrtree;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.nathanielwendt.lstrtree.evals.Eval;
 
 public class BaseRunActivity extends Activity {
+
+    private static final String TAG = BaseRunActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,9 +20,11 @@ public class BaseRunActivity extends Activity {
         Bundle extras = this.getIntent().getExtras();
 
         if(extras != null){
+            Log.d(TAG, extras.toString());
             String evalClassName = extras.getString("eval");
             try {
-                System.out.println(extras.size());
+                Log.d(TAG, "Extras size: "+extras.size());
+                Log.d(TAG, "Test name: "+evalClassName);
                 Object newObject = Class.forName("com.example.nathanielwendt.lstrtree.evals." + evalClassName).newInstance();
                 if(extras.size() > 1){
                     ((Eval) newObject).execute(this, extras);
