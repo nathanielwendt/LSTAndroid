@@ -56,34 +56,10 @@ public class SmartInsert implements Eval {
         }
         Constants.SmartInsert.INS_THRESH = smartInsVal;
         final LSTFilter lstFilter = new LSTFilter(helper);
+        lstFilter.setKDCache(true);
         lstFilter.setSmartInsert(true);
 
         lstFilter.clear();
-
-        STRegion bounds = helper.getBoundingBox();
-        STPoint minBounds = bounds.getMins();
-        STPoint maxBounds = bounds.getMaxs();
-
-        float xStep, yStep, tStep;
-        if("cabs".equals(dataType)){
-            System.out.println("setting up data type: Cabs");
-            Constants.setCabDefaults();
-            float spaceGrid = 10; // 10 km
-            float timeGrid = 60 * 60 * 24 * 7; // one week (in seconds)
-            STPoint cube = new STPoint(GPSLib.longOffsetFromDistance(minBounds, spaceGrid), GPSLib.latOffsetFromDistance(minBounds, spaceGrid), timeGrid);
-            xStep = cube.getX();
-            yStep = cube.getY();
-            tStep = cube.getT();
-        } else {
-            System.out.println("setting up data type: Mobility");
-            Constants.setMobilityDefaults();
-            float spaceGrid = 100; // 100m
-            float timeGrid = 60 * 10; // 10 minutes (in seconds)
-            STPoint cube = new STPoint(GPSLib.longOffsetFromDistance(minBounds, spaceGrid), GPSLib.latOffsetFromDistance(minBounds, spaceGrid), timeGrid);
-            xStep = cube.getX();
-            yStep = cube.getY();
-            tStep = cube.getT();
-        }
 
         Stabilizer stabFunc = new Stabilizer(){
             @Override
@@ -116,6 +92,31 @@ public class SmartInsert implements Eval {
             e.printStackTrace();
         }
         MultiProfiler.endMark("SI");
+
+        STRegion bounds = helper.getBoundingBox();
+        STPoint minBounds = bounds.getMins();
+        STPoint maxBounds = bounds.getMaxs();
+
+        float xStep, yStep, tStep;
+        if("cabs".equals(dataType)){
+            System.out.println("setting up data type: Cabs");
+            Constants.setCabDefaults();
+            float spaceGrid = 10; // 10 km
+            float timeGrid = 60 * 60 * 24 * 7; // one week (in seconds)
+            STPoint cube = new STPoint(GPSLib.longOffsetFromDistance(minBounds, spaceGrid), GPSLib.latOffsetFromDistance(minBounds, spaceGrid), timeGrid);
+            xStep = cube.getX();
+            yStep = cube.getY();
+            tStep = cube.getT();
+        } else {
+            System.out.println("setting up data type: Mobility");
+            Constants.setMobilityDefaults();
+            float spaceGrid = 100; // 100m
+            float timeGrid = 60 * 10; // 10 minutes (in seconds)
+            STPoint cube = new STPoint(GPSLib.longOffsetFromDistance(minBounds, spaceGrid), GPSLib.latOffsetFromDistance(minBounds, spaceGrid), timeGrid);
+            xStep = cube.getX();
+            yStep = cube.getY();
+            tStep = cube.getT();
+        }
 
         List<Double> poks = new ArrayList<Double>();
         List<Integer> numCandPoints = new ArrayList<Integer>();
