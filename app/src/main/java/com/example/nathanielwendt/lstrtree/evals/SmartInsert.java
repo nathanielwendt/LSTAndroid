@@ -137,6 +137,8 @@ public class SmartInsert implements Eval {
 
         Log.d(TAG, "Populated Database table with size: " + helper.getSize());
         Log.d(TAG, "Cleared other table with size: " + other.getSize());
+        System.out.println(poks);
+        System.out.println(numCandPoints);
     }
 
     @Override
