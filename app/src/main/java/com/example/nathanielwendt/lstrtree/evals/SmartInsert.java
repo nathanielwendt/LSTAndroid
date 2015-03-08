@@ -12,6 +12,7 @@ import com.ut.mpc.utils.GPSLib;
 import com.ut.mpc.utils.LSTFilter;
 import com.ut.mpc.utils.STPoint;
 import com.ut.mpc.utils.STRegion;
+import com.ut.mpc.utils.STStorage;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -38,11 +39,19 @@ public class SmartInsert implements Eval {
         final String fileName = options.getString("file");
         boolean append = Boolean.valueOf(options.getString("append"));
         final double smartInsVal = Double.valueOf(options.getString("smartInsVal"));
+        String type = options.getString("type");
 
-        SQLiteRTree helper = new SQLiteRTree(ctx, "RTreeMain");
-        SQLiteNaive other = new SQLiteNaive(ctx, "SpatialTableMain");
-        other.clear();
-
+        STStorage helper, other;
+        boolean isRTree = ("SQLiteRTree").equals(type);
+        if(isRTree){
+            helper = new SQLiteRTree(ctx, "RTreeMain");
+            other = new SQLiteNaive(ctx, "SpatialTableMain");
+            other.clear();
+        } else {
+            helper = new SQLiteNaive(ctx, "SpatialTableMain");
+            other = new SQLiteNaive(ctx, "RTreeMain");
+            other.clear();
+        }
         Constants.SmartInsert.INS_THRESH = smartInsVal;
         final LSTFilter lstFilter = new LSTFilter(helper);
         lstFilter.setSmartInsert(true);
@@ -123,6 +132,7 @@ public class SmartInsert implements Eval {
         options.putString("numPoints", "1000");
         options.putString("append", "False");
         options.putString("smartInsVal", String.valueOf(DBPrepare.smartInsOffVal));
+        options.putString("type", "SQLiteRTree");
         execute(ctx, options);
     }
 

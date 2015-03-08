@@ -65,7 +65,7 @@ public class SuperGridDbArr implements Eval {
                 for(float t = minBounds.getT(); t < maxBounds.getT(); t+= tStep) {
                     STRegion region = new STRegion(new STPoint(x,y,t), new STPoint(x + xStep,y + yStep,t + tStep));
                     MultiProfiler.startMark(stabFunc, region, x + "," + y + "," + t);
-                    for(int i = 0; i < 10; i++){
+                    for(int i = 0; i < 3; i++){
                         val = lstFilter.windowPoK(region);
                     }
                     MultiProfiler.endMark(x + "," + y + "," + t);

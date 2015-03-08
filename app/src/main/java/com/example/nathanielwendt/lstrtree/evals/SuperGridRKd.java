@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.example.nathanielwendt.lstrtree.SQLiteRTree;
+import com.ut.mpc.setup.Constants;
 import com.ut.mpc.utils.GPSLib;
 import com.ut.mpc.utils.LSTFilter;
 import com.ut.mpc.utils.STPoint;
@@ -26,26 +27,37 @@ public class SuperGridRKd implements Eval {
     @Override
     public void execute(Context ctx, Bundle options){
         String dbTag = options.getString("dbTag");
-
-        String pref = options.getString("pref");
-        if (pref == null) {
-            pref = "normal.pref";
-        }
+        String dataType = options.getString("dataType");
 
         SQLiteRTree helper = new SQLiteRTree(ctx, "RTreeMain");
         final LSTFilter lstFilter = new LSTFilter(helper);
         lstFilter.setKDCache(true);
 
+
         STRegion bounds = helper.getBoundingBox();
         STPoint minBounds = bounds.getMins();
         STPoint maxBounds = bounds.getMaxs();
 
-        float spaceGrid = 10; // 10 km
-        float timeGrid = 60 * 60 * 24 * 7; // one week
-        STPoint cube = new STPoint(GPSLib.longOffsetFromDistance(minBounds, spaceGrid), GPSLib.latOffsetFromDistance(minBounds, spaceGrid), timeGrid);
-        float xStep = cube.getX();
-        float yStep = cube.getY();
-        float tStep = cube.getT();
+        float xStep, yStep, tStep;
+        if("cabs".equals(dataType)){
+            System.out.println("setting up data type: Cabs");
+            Constants.setCabDefaults();
+            float spaceGrid = 10; // 10 km
+            float timeGrid = 60 * 60 * 24 * 7; // one week (in seconds)
+            STPoint cube = new STPoint(GPSLib.longOffsetFromDistance(minBounds, spaceGrid), GPSLib.latOffsetFromDistance(minBounds, spaceGrid), timeGrid);
+            xStep = cube.getX();
+            yStep = cube.getY();
+            tStep = cube.getT();
+        } else {
+            System.out.println("setting up data type: Mobility");
+            Constants.setMobilityDefaults();
+            float spaceGrid = 100; // 100m
+            float timeGrid = 60 * 10; // 10 minutes (in seconds)
+            STPoint cube = new STPoint(GPSLib.longOffsetFromDistance(minBounds, spaceGrid), GPSLib.latOffsetFromDistance(minBounds, spaceGrid), timeGrid);
+            xStep = cube.getX();
+            yStep = cube.getY();
+            tStep = cube.getT();
+        }
 
         Stabilizer stabFunc = new Stabilizer(){
             @Override
@@ -65,11 +77,10 @@ public class SuperGridRKd implements Eval {
                 for(float t = minBounds.getT(); t < maxBounds.getT(); t+= tStep) {
                     STRegion region = new STRegion(new STPoint(x,y,t), new STPoint(x + xStep,y + yStep,t + tStep));
                     MultiProfiler.startMark(stabFunc, region, x + "," + y + "," + t);
-                    for(int i = 0; i < 10; i++){
+                    for(int i = 0; i < 3; i++){
                         val = lstFilter.windowPoK(region);
                     }
                     MultiProfiler.endMark(x + "," + y + "," + t);
-                    System.out.println("val is: " + val);
                     if(val > 0.001){
                         nonZeroCount++;
                         System.out.println("incremented count");
@@ -104,6 +115,7 @@ public class SuperGridRKd implements Eval {
     public void execute(Context ctx){
         Bundle options = new Bundle();
         options.putString("dbTag", "SG");
+        options.putString("dataType", "cabs");
         execute(ctx, options);
     }
 }
