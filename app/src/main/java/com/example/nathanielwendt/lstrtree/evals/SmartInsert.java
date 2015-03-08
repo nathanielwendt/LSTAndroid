@@ -71,7 +71,7 @@ public class SmartInsert implements Eval {
         };
 
         MultiProfiler.init(this, ctx);
-        MultiProfiler.startProfiling(TAG + fileName + smartInsVal);
+        MultiProfiler.startProfiling(TAG + "_" + numPoints + "_" + fileName + "_" + smartInsVal + "_" + type);
         MultiProfiler.startMark(stabFunc, null, "SI");
         try {
             BufferedReader br = new BufferedReader(new FileReader(filePath));
