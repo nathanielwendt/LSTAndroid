@@ -37,17 +37,19 @@ public class SmartInsert implements Eval {
     public void execute(Context ctx, Bundle options){
         int numPoints = Integer.valueOf(options.getString("numPoints"));
         final String fileName = options.getString("file");
-        boolean append = Boolean.valueOf(options.getString("append"));
         final double smartInsVal = Double.valueOf(options.getString("smartInsVal"));
         String type = options.getString("type");
+        String dataType = options.getString("dataType");
 
         STStorage helper, other;
         boolean isRTree = ("SQLiteRTree").equals(type);
         if(isRTree){
+            System.out.println("setting up db type: SQLiteRTree");
             helper = new SQLiteRTree(ctx, "RTreeMain");
             other = new SQLiteNaive(ctx, "SpatialTableMain");
             other.clear();
         } else {
+            System.out.println("setting up db type: SpatialTableMain");
             helper = new SQLiteNaive(ctx, "SpatialTableMain");
             other = new SQLiteNaive(ctx, "RTreeMain");
             other.clear();
@@ -56,14 +58,38 @@ public class SmartInsert implements Eval {
         final LSTFilter lstFilter = new LSTFilter(helper);
         lstFilter.setSmartInsert(true);
 
-        if(!append){
-            lstFilter.clear();
+        lstFilter.clear();
+
+        STRegion bounds = helper.getBoundingBox();
+        STPoint minBounds = bounds.getMins();
+        STPoint maxBounds = bounds.getMaxs();
+
+        float xStep, yStep, tStep;
+        if("cabs".equals(dataType)){
+            System.out.println("setting up data type: Cabs");
+            Constants.setCabDefaults();
+            float spaceGrid = 10; // 10 km
+            float timeGrid = 60 * 60 * 24 * 7; // one week (in seconds)
+            STPoint cube = new STPoint(GPSLib.longOffsetFromDistance(minBounds, spaceGrid), GPSLib.latOffsetFromDistance(minBounds, spaceGrid), timeGrid);
+            xStep = cube.getX();
+            yStep = cube.getY();
+            tStep = cube.getT();
+        } else {
+            System.out.println("setting up data type: Mobility");
+            Constants.setMobilityDefaults();
+            float spaceGrid = 100; // 100m
+            float timeGrid = 60 * 10; // 10 minutes (in seconds)
+            STPoint cube = new STPoint(GPSLib.longOffsetFromDistance(minBounds, spaceGrid), GPSLib.latOffsetFromDistance(minBounds, spaceGrid), timeGrid);
+            xStep = cube.getX();
+            yStep = cube.getY();
+            tStep = cube.getT();
         }
 
         Stabilizer stabFunc = new Stabilizer(){
             @Override
             public void task(Object data) {
                 DBPrepare.populateDB(lstFilter, "/sdcard/Crawdad/" + fileName, 25, smartInsVal);
+                lstFilter.clear();
             }
         };
 
@@ -90,18 +116,6 @@ public class SmartInsert implements Eval {
             e.printStackTrace();
         }
         MultiProfiler.endMark("SI");
-
-
-        STRegion bounds = helper.getBoundingBox();
-        STPoint minBounds = bounds.getMins();
-        STPoint maxBounds = bounds.getMaxs();
-
-        float spaceGrid = 10; // 10 km
-        float timeGrid = 60 * 60 * 24 * 7; // one week
-        STPoint cube = new STPoint(GPSLib.longOffsetFromDistance(minBounds, spaceGrid), GPSLib.latOffsetFromDistance(minBounds, spaceGrid), timeGrid);
-        float xStep = cube.getX();
-        float yStep = cube.getY();
-        float tStep = cube.getT();
 
         List<Double> poks = new ArrayList<Double>();
         List<Integer> numCandPoints = new ArrayList<Integer>();
@@ -130,9 +144,9 @@ public class SmartInsert implements Eval {
         Bundle options = new Bundle();
         options.putString("file", "new_abboip.txt");
         options.putString("numPoints", "1000");
-        options.putString("append", "False");
         options.putString("smartInsVal", String.valueOf(DBPrepare.smartInsOffVal));
         options.putString("type", "SQLiteRTree");
+        options.putString("dataType", "cabs");
         execute(ctx, options);
     }
 
