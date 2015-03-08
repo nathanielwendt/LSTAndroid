@@ -61,10 +61,11 @@ public class SmartInsert implements Eval {
 
         lstFilter.clear();
 
+        final String filePath = "/sdcard/Crawdad/" + fileName;
         Stabilizer stabFunc = new Stabilizer(){
             @Override
             public void task(Object data) {
-                DBPrepare.populateDB(lstFilter, "/sdcard/Crawdad/" + fileName, 25, smartInsVal);
+                DBPrepare.populateDB(lstFilter, filePath, 25, smartInsVal);
                 lstFilter.clear();
             }
         };
@@ -73,7 +74,7 @@ public class SmartInsert implements Eval {
         MultiProfiler.startProfiling(TAG + fileName + smartInsVal);
         MultiProfiler.startMark(stabFunc, null, "SI");
         try {
-            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            BufferedReader br = new BufferedReader(new FileReader(filePath));
             String line;
             line = br.readLine();
             String[] split = line.split(" ");
