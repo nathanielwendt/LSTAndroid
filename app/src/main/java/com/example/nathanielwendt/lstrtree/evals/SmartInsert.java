@@ -65,8 +65,8 @@ public class SmartInsert implements Eval {
         Stabilizer stabFunc = new Stabilizer(){
             @Override
             public void task(Object data) {
-                DBPrepare.populateDB(lstFilter, filePath, 25, smartInsVal);
-                lstFilter.clear();
+                //DBPrepare.populateDB(lstFilter, filePath, 25, smartInsVal);
+                //lstFilter.clear();
             }
         };
 
