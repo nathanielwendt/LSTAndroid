@@ -33,7 +33,6 @@ public class SuperGridRKd implements Eval {
         final LSTFilter lstFilter = new LSTFilter(helper);
         lstFilter.setKDCache(true);
 
-
         STRegion bounds = helper.getBoundingBox();
         STPoint minBounds = bounds.getMins();
         STPoint maxBounds = bounds.getMaxs();
