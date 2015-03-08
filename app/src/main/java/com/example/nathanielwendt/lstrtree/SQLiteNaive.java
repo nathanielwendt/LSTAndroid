@@ -14,6 +14,7 @@ import com.ut.mpc.utils.STStorage;
 
 import org.sqlite.database.ExtraUtils;
 import org.sqlite.database.sqlite.SQLiteDatabase;
+import org.sqlite.database.sqlite.SQLiteException;
 import org.sqlite.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
@@ -28,6 +29,9 @@ import static com.ut.mpc.setup.Constants.SPATIAL_TYPE;
 
 public class SQLiteNaive extends SQLiteOpenHelper implements STStorage {
 
+    static {
+        System.loadLibrary("sqliteX");
+    }
 
     private Context myContext;
     private String table_identifier;
@@ -45,6 +49,23 @@ public class SQLiteNaive extends SQLiteOpenHelper implements STStorage {
             dbInit.init();
             this.onCreate(this.getWritableDatabase());
         }
+
+        if(!checkTableExists()){
+            this.onCreate(this.getWritableDatabase());
+        }
+
+    }
+
+    public boolean checkTableExists(){
+        Cursor cursor = this.getReadableDatabase().rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"+ this.table_identifier +"'", null);
+        if(cursor!=null) {
+            if(cursor.getCount()>0) {
+                cursor.close();
+                return true;
+            }
+            cursor.close();
+        }
+        return false;
     }
 
     @Override
@@ -240,7 +261,11 @@ public class SQLiteNaive extends SQLiteOpenHelper implements STStorage {
 
     public void clear(){
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(this.table_identifier, null, null);
+        try {
+            db.delete(this.table_identifier, null, null);
+        } catch (SQLiteException e){
+            //do nothing, db probably did not exist before delete
+        }
     }
 
     @Override

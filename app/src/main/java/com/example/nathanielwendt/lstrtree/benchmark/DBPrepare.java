@@ -30,7 +30,7 @@ public class DBPrepare {
         }
 
         for(int i = 0; i < structs.length; i++){
-            structs[i].clear();
+            //structs[i].clear();
             structs[i].setSmartInsert(smartInsert);
         }
 

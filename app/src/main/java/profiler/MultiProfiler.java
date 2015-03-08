@@ -16,7 +16,7 @@ import java.util.Date;
 public class MultiProfiler {
 
     private static final int stabilizeThresh = 10; // in ms
-    private static final int minCount = 10; // in iterations
+    private static final int minCount = 1; // in iterations
     private static Context appContext;
     //private static Stabilizer mStabilizer;
 
@@ -78,8 +78,7 @@ public class MultiProfiler {
         Intent trepn = new Intent("com.quicinc.Trepn.UpdateAppState");
         int trepnStartCode = Math.abs(desc.hashCode() % 1000);
         trepn.putExtra("com.quicinc.Trepn.UpdateAppState.Value", trepnStartCode);
-        trepn.putExtra("com.quicinc.Trepn.UpdateAppState.Value.Desc", desc
-                + "::Start");
+        trepn.putExtra("com.quicinc.Trepn.UpdateAppState.Value.Desc", desc);
         appContext.sendBroadcast(trepn);
         return trepnStartCode;
     }
@@ -89,8 +88,7 @@ public class MultiProfiler {
         //int trepnEndCode = Math.abs(desc.hashCode() % 1000) + 1;
         int trepnEndCode = 0;
         trepn.putExtra("com.quicinc.Trepn.UpdateAppState.Value", trepnEndCode);
-        trepn.putExtra("com.quicinc.Trepn.UpdateAppState.Value.Desc", desc
-                + "::End");
+        trepn.putExtra("com.quicinc.Trepn.UpdateAppState.Value.Desc", desc);
         appContext.sendBroadcast(trepn);
         return trepnEndCode;
     }
@@ -126,11 +124,11 @@ public class MultiProfiler {
             runningSum += execTime;
             count++;
             avg = runningSum / count;
-            Log.d(TAG, "avg: "+ avg);
+            Log.d(TAG, "avg: " + avg);
             Log.d(TAG, "execTime: " + execTime);
 
-        } while((count < minCount) || (Math.abs(avg - execTime) > stabilizeThresh));
-
+            // } while((count < minCount) || (Math.abs(avg - execTime) > stabilizeThresh));
+        } while(count < minCount);
     }
 
 }
