@@ -81,7 +81,7 @@ public class SmartInsert implements Eval {
             xIndex = 1;
             yIndex = 2;
             tIndex = 0;
-            delimiter = "\\t";
+            delimiter = "\\s+";
         }
 
         MultiProfiler.init(this, ctx);
@@ -92,6 +92,9 @@ public class SmartInsert implements Eval {
             String line;
             line = br.readLine();
             String[] split = line.split(delimiter);
+            //Log.d(TAG, "index0:_" + split[0] + "_");
+            //Log.d(TAG, "index1:_" + split[1] + "_");
+            //Log.d(TAG, "index2:_" + split[2] + "_");
             STPoint point = new STPoint(Float.valueOf(split[xIndex]),Float.valueOf(split[yIndex]),Float.valueOf(split[tIndex]));
 
             int count = 1;
@@ -99,6 +102,9 @@ public class SmartInsert implements Eval {
             while (((line = br.readLine()) != null) && count < numPoints) {
                 split = line.split(delimiter);
                 point = new STPoint(Float.valueOf(split[xIndex]),Float.valueOf(split[yIndex]),Float.valueOf(split[tIndex]));
+                //Log.d(TAG, "index0:_" + split[0] + "_");
+                //Log.d(TAG, "index1:_" + split[1] + "_");
+                //Log.d(TAG, "index2:_" + split[2] + "_");
                 lstFilter.insert(point);
                 count++;
             }
@@ -125,9 +131,9 @@ public class SmartInsert implements Eval {
         } else {
             System.out.println("setting up data type: Mobility");
             Constants.setMobilityDefaults();
-            float spaceGrid = 100; // 100m
-            float timeGrid = 60 * 10; // 10 minutes (in seconds)
-            STPoint cube = new STPoint(GPSLib.longOffsetFromDistance(minBounds, spaceGrid), GPSLib.latOffsetFromDistance(minBounds, spaceGrid), timeGrid);
+            float spaceGrid = 500; // 1000m
+            float timeGrid = 60 * 60 * 3; // 4 hr (in seconds)
+            STPoint cube = new STPoint(spaceGrid, spaceGrid, timeGrid);
             xStep = cube.getX();
             yStep = cube.getY();
             tStep = cube.getT();
@@ -159,13 +165,13 @@ public class SmartInsert implements Eval {
 
     @Override
     public void execute(Context ctx){
-        Bundle options = new Bundle();
+        /*Bundle options = new Bundle();
         options.putString("file", "new_abboip.txt");
         options.putString("numPoints", "1000");
         options.putString("smartInsVal", String.valueOf(DBPrepare.smartInsOffVal));
         options.putString("type", "SQLiteRTree");
         options.putString("dataType", "cabs");
-        execute(ctx, options);
+        execute(ctx, options);*/
     }
 
 }
