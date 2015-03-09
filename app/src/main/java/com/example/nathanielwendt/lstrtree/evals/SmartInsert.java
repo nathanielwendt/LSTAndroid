@@ -81,7 +81,7 @@ public class SmartInsert implements Eval {
             xIndex = 1;
             yIndex = 2;
             tIndex = 0;
-            delimiter = "\t";
+            delimiter = "\\t";
         }
 
         MultiProfiler.init(this, ctx);
