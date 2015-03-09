@@ -31,7 +31,7 @@ import profiler.Stabilizer;
  */
 public class SmartInsert implements Eval {
 
-    private static final String TAG = SuperGridRKd.class.getSimpleName();
+    private static final String TAG = SmartInsert.class.getSimpleName();
 
     @Override
     public void execute(Context ctx, Bundle options){
