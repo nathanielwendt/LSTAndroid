@@ -53,6 +53,15 @@ public class SmartInsert implements Eval {
             other = new SQLiteNaive(ctx, "RTreeMain");
             other.clear();
         }
+
+        if("cabs".equals(dataType)){
+            System.out.println("setting up data type: Cabs");
+            Constants.setCabDefaults();
+        } else {
+            System.out.println("setting up data type: Mobility");
+            Constants.setMobilityDefaults();
+        }
+
         Constants.SmartInsert.INS_THRESH = smartInsVal;
         final LSTFilter lstFilter = new LSTFilter(helper);
         lstFilter.setKDCache(true);
@@ -116,8 +125,8 @@ public class SmartInsert implements Eval {
         STPoint minBounds, maxBounds;
         float xStep, yStep, tStep;
         if("cabs".equals(dataType)){
-            System.out.println("setting up data type: Cabs");
-            Constants.setCabDefaults();
+//            System.out.println("setting up data type: Cabs");
+//            Constants.setCabDefaults();
             float spaceGrid = 10; // 10 km
             float timeGrid = 60 * 60 * 24 * 7; // one week (in seconds)
             STRegion bounds = helper.getBoundingBox();
@@ -128,8 +137,8 @@ public class SmartInsert implements Eval {
             yStep = cube.getY();
             tStep = cube.getT();
         } else {
-            System.out.println("setting up data type: Mobility");
-            Constants.setMobilityDefaults();
+//            System.out.println("setting up data type: Mobility");
+//            Constants.setMobilityDefaults();
             float spaceGrid = 500; // 500m
             float timeGrid = 60 * 60 * 3; // 10 hours (in seconds)
             STRegion bounds = helper.getBoundingBox();

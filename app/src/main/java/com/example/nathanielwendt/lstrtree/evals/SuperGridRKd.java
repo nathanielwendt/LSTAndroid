@@ -74,13 +74,11 @@ public class SuperGridRKd implements Eval {
         int totalCount = 0;
         double val = 0.0;
 
-        List<STRegion> regions = new ArrayList<STRegion>();
         outerloop:
         for(float x = minBounds.getX(); x < maxBounds.getX(); x+= xStep){
             for(float y = minBounds.getY(); y < maxBounds.getY(); y+= yStep){
                 for(float t = minBounds.getT(); t < maxBounds.getT(); t+= tStep) {
                     STRegion region = new STRegion(new STPoint(x,y,t), new STPoint(x + xStep,y + yStep,t + tStep));
-                    regions.add(region);
                     MultiProfiler.startMark(stabFunc, region, x + "," + y + "," + t);
                     for(int i = 0; i < 3; i++){
                         val = lstFilter.windowPoK(region);
@@ -96,10 +94,6 @@ public class SuperGridRKd implements Eval {
             }
         }
         MultiProfiler.stopProfiling();
-
-        for(STRegion reg: regions){
-            System.out.println(reg);
-        }
 
         System.out.println("Loop count is : " + totalCount);
         List<Double> poks = new ArrayList<Double>();
