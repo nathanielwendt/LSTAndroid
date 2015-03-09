@@ -84,7 +84,6 @@ public class SmartInsert implements Eval {
             delimiter = "\t";
         }
 
-
         MultiProfiler.init(this, ctx);
         MultiProfiler.startProfiling(TAG + "_" + numPoints + "_" + fileName + "_" + smartInsVal + "_" + type);
         MultiProfiler.startMark(stabFunc, null, "SI");

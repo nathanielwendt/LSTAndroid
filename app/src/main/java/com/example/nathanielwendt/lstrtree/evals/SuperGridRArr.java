@@ -52,7 +52,7 @@ public class SuperGridRArr implements Eval {
             Constants.setMobilityDefaults();
             float spaceGrid = 100; // 100m
             float timeGrid = 60 * 10; // 10 minutes (in seconds)
-            STPoint cube = new STPoint(GPSLib.longOffsetFromDistance(minBounds, spaceGrid), GPSLib.latOffsetFromDistance(minBounds, spaceGrid), timeGrid);
+            STPoint cube = new STPoint(spaceGrid, spaceGrid, timeGrid);
             xStep = cube.getX();
             yStep = cube.getY();
             tStep = cube.getT();

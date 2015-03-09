@@ -25,6 +25,14 @@ public class InsertData implements Eval {
         String fileName = options.getString("file");
         boolean append = Boolean.valueOf(options.getString("append"));
         String type = options.getString("type");
+        String dataType = options.getString("dataType");
+
+        if("cabs".equals(dataType)){
+            System.out.println("setting up data type: Cabs");
+
+        } else {
+            System.out.println("setting up data type: Mobility");
+        }
 
         STStorage helper, other;
         boolean isRTree = ("SQLiteRTree").equals(type);
