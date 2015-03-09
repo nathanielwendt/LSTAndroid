@@ -27,13 +27,6 @@ public class InsertData implements Eval {
         String type = options.getString("type");
         String dataType = options.getString("dataType");
 
-        if("cabs".equals(dataType)){
-            System.out.println("setting up data type: Cabs");
-
-        } else {
-            System.out.println("setting up data type: Mobility");
-        }
-
         STStorage helper, other;
         boolean isRTree = ("SQLiteRTree").equals(type);
         if(isRTree){
@@ -50,7 +43,17 @@ public class InsertData implements Eval {
         if(!append){
             lstFilter.clear();
         }
-        DBPrepare.populateDB(lstFilter, "/sdcard/Crawdad/" + fileName, numPoints, DBPrepare.smartInsOffVal);
+
+        boolean isCabs = ("cabs").equals(dataType);
+        DBPrepare.populateDB(lstFilter, "/sdcard/Crawdad/" + fileName, numPoints, DBPrepare.smartInsOffVal, isCabs);
+
+        if("cabs".equals(dataType)){
+            System.out.println("setting up data type: Cabs");
+
+        } else {
+            System.out.println("setting up data type: Mobility");
+        }
+
 
         Log.d(TAG, "Is R Tree?: " + isRTree);
         Log.d(TAG, "Populated Database table with size: " + helper.getSize());

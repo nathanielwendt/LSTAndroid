@@ -12,15 +12,15 @@ import java.io.FileReader;
 public class DBPrepare {
     public static final double smartInsOffVal = -1;
 
-    public static void populateDB(LSTFilter struct, String fileName, int num, double smartInsThresh) {
-        populateDB(new LSTFilter[]{struct}, fileName, num, smartInsThresh);
+    public static void populateDB(LSTFilter struct, String fileName, int num, double smartInsThresh, boolean isCabs) {
+        populateDB(new LSTFilter[]{struct}, fileName, num, smartInsThresh, isCabs);
     }
 
     public static void populateDB(LSTFilter struct, String fileName, int num) {
-        populateDB(new LSTFilter[]{struct}, fileName, num, smartInsOffVal);
+        populateDB(new LSTFilter[]{struct}, fileName, num, smartInsOffVal, true);
     }
 
-    public static void populateDB(LSTFilter[] structs, String fileName, int num, double smartInsThresh) {
+    public static void populateDB(LSTFilter[] structs, String fileName, int num, double smartInsThresh, boolean isCabs) {
 
         boolean smartInsert;
         if(smartInsThresh == smartInsOffVal){
@@ -34,18 +34,32 @@ public class DBPrepare {
             structs[i].setSmartInsert(smartInsert);
         }
 
+        int xIndex, yIndex, tIndex;
+        String delimiter;
+        if(isCabs) {
+            xIndex = 1;
+            yIndex = 0;
+            tIndex = 3;
+            delimiter = " ";
+        } else {
+            xIndex = 1;
+            yIndex = 2;
+            tIndex = 0;
+            delimiter = "\t";
+        }
+
         try {
             BufferedReader br = new BufferedReader(new FileReader(fileName));
             String line;
             line = br.readLine();
-            String[] split = line.split(" ");
-            STPoint point = new STPoint(Float.valueOf(split[1]),Float.valueOf(split[0]),Float.valueOf(split[3]));
+            String[] split = line.split(delimiter);
+            STPoint point = new STPoint(Float.valueOf(split[xIndex]),Float.valueOf(split[yIndex]),Float.valueOf(split[tIndex]));
 
             int count = 1;
             insertPoint(structs, point);
             while (((line = br.readLine()) != null) && count < num) {
-                split = line.split(" ");
-                point = new STPoint(Float.valueOf(split[1]),Float.valueOf(split[0]),Float.valueOf(split[3]));
+                split = line.split(delimiter);
+                point = new STPoint(Float.valueOf(split[xIndex]),Float.valueOf(split[yIndex]),Float.valueOf(split[tIndex]));
                 insertPoint(structs, point);
                 count++;
             }

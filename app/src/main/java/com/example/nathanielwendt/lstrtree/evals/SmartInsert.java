@@ -97,7 +97,7 @@ public class SmartInsert implements Eval {
             int count = 1;
             lstFilter.insert(point);
             while (((line = br.readLine()) != null) && count < numPoints) {
-                split = line.split(" ");
+                split = line.split(delimiter);
                 point = new STPoint(Float.valueOf(split[xIndex]),Float.valueOf(split[yIndex]),Float.valueOf(split[tIndex]));
                 lstFilter.insert(point);
                 count++;
