@@ -50,8 +50,8 @@ public class SuperGridRKd implements Eval {
         } else {
             System.out.println("setting up data type: Mobility");
             Constants.setMobilityDefaults();
-            float spaceGrid = 100; // 100m
-            float timeGrid = 60 * 10; // 10 minutes (in seconds)
+            float spaceGrid = 500; // 500m
+            float timeGrid = 60 * 60 * 3; // 10 hours (in seconds)
             STPoint cube = new STPoint(spaceGrid, spaceGrid, timeGrid);
             xStep = cube.getX();
             yStep = cube.getY();

@@ -20,18 +20,23 @@ import profiler.Stabilizer;
  * Basic window query operation
  * <li>dbTag - tag to give in name of database for this run</li>
  */
-public class SuperGridRArr implements Eval {
+public class GridFactorSweep implements Eval {
 
-    private static final String TAG = SuperGridRArr.class.getSimpleName();
+    private static final String TAG = GridFactorSweep.class.getSimpleName();
 
     @Override
     public void execute(Context ctx, Bundle options){
         String dbTag = options.getString("dbTag");
         String dataType = options.getString("dataType");
+        int gridFactor = Integer.valueOf(options.getString("gridFactor"));
+
+        Constants.PoK.GRID_FACTOR = gridFactor;
+        Constants.PoK.GRID_DEFAULT = false;
+        System.out.println("setting grid factor to: " + gridFactor);
 
         SQLiteRTree helper = new SQLiteRTree(ctx, "RTreeMain");
         final LSTFilter lstFilter = new LSTFilter(helper);
-        lstFilter.setKDCache(false);
+        lstFilter.setKDCache(true);
 
         STRegion bounds = helper.getBoundingBox();
         STPoint minBounds = bounds.getMins();
@@ -50,7 +55,7 @@ public class SuperGridRArr implements Eval {
         } else {
             System.out.println("setting up data type: Mobility");
             Constants.setMobilityDefaults();
-            float spaceGrid = 500; // 500m
+            float spaceGrid = 500; // 1500m
             float timeGrid = 60 * 60 * 3; // 10 hours (in seconds)
             STPoint cube = new STPoint(spaceGrid, spaceGrid, timeGrid);
             xStep = cube.getX();
@@ -66,7 +71,7 @@ public class SuperGridRArr implements Eval {
         };
 
         MultiProfiler.init(this, ctx);
-        MultiProfiler.startProfiling(TAG + dbTag);
+        MultiProfiler.startProfiling(TAG + dbTag + "gf-" + gridFactor);
         int nonZeroCount = 0;
         int totalCount = 0;
         double val = 0.0;
@@ -114,6 +119,8 @@ public class SuperGridRArr implements Eval {
     public void execute(Context ctx){
         Bundle options = new Bundle();
         options.putString("dbTag", "SG");
+        options.putString("dataType", "cabs");
+        options.putString("gridFactor", "1");
         execute(ctx, options);
     }
 }
