@@ -69,6 +69,21 @@ public class SmartInsert implements Eval {
                 //lstFilter.clear();
             }
         };
+        
+        int xIndex, yIndex, tIndex;
+        String delimiter;
+        if("cabs".equals(dataType)) {
+            xIndex = 1;
+            yIndex = 0;
+            tIndex = 3;
+            delimiter = " ";
+        } else {
+            xIndex = 1;
+            yIndex = 2;
+            tIndex = 0;
+            delimiter = "\t";
+        }
+
 
         MultiProfiler.init(this, ctx);
         MultiProfiler.startProfiling(TAG + "_" + numPoints + "_" + fileName + "_" + smartInsVal + "_" + type);
@@ -77,14 +92,14 @@ public class SmartInsert implements Eval {
             BufferedReader br = new BufferedReader(new FileReader(filePath));
             String line;
             line = br.readLine();
-            String[] split = line.split(" ");
-            STPoint point = new STPoint(Float.valueOf(split[1]),Float.valueOf(split[0]),Float.valueOf(split[3]));
+            String[] split = line.split(delimiter);
+            STPoint point = new STPoint(Float.valueOf(split[xIndex]),Float.valueOf(split[yIndex]),Float.valueOf(split[tIndex]));
 
             int count = 1;
             lstFilter.insert(point);
             while (((line = br.readLine()) != null) && count < numPoints) {
                 split = line.split(" ");
-                point = new STPoint(Float.valueOf(split[1]),Float.valueOf(split[0]),Float.valueOf(split[3]));
+                point = new STPoint(Float.valueOf(split[xIndex]),Float.valueOf(split[yIndex]),Float.valueOf(split[tIndex]));
                 lstFilter.insert(point);
                 count++;
             }
