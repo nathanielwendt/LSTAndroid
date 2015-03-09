@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.example.nathanielwendt.lstrtree.SQLiteNaive;
 import com.example.nathanielwendt.lstrtree.SQLiteRTree;
-import com.example.nathanielwendt.lstrtree.benchmark.DBPrepare;
 import com.ut.mpc.setup.Constants;
 import com.ut.mpc.utils.GPSLib;
 import com.ut.mpc.utils.LSTFilter;
@@ -114,16 +113,16 @@ public class SmartInsert implements Eval {
         }
         MultiProfiler.endMark("SI");
 
-        STRegion bounds = helper.getBoundingBox();
-        STPoint minBounds = bounds.getMins();
-        STPoint maxBounds = bounds.getMaxs();
-
+        STPoint minBounds, maxBounds;
         float xStep, yStep, tStep;
         if("cabs".equals(dataType)){
             System.out.println("setting up data type: Cabs");
             Constants.setCabDefaults();
             float spaceGrid = 10; // 10 km
             float timeGrid = 60 * 60 * 24 * 7; // one week (in seconds)
+            STRegion bounds = helper.getBoundingBox();
+            minBounds = bounds.getMins();
+            maxBounds = bounds.getMaxs();
             STPoint cube = new STPoint(GPSLib.longOffsetFromDistance(minBounds, spaceGrid), GPSLib.latOffsetFromDistance(minBounds, spaceGrid), timeGrid);
             xStep = cube.getX();
             yStep = cube.getY();
@@ -131,8 +130,11 @@ public class SmartInsert implements Eval {
         } else {
             System.out.println("setting up data type: Mobility");
             Constants.setMobilityDefaults();
-            float spaceGrid = 500; // 1000m
-            float timeGrid = 60 * 60 * 3; // 4 hr (in seconds)
+            float spaceGrid = 500; // 500m
+            float timeGrid = 60 * 60 * 3; // 10 hours (in seconds)
+            STRegion bounds = helper.getBoundingBox();
+            minBounds = bounds.getMins();
+            maxBounds = bounds.getMaxs();
             STPoint cube = new STPoint(spaceGrid, spaceGrid, timeGrid);
             xStep = cube.getX();
             yStep = cube.getY();

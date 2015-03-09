@@ -33,16 +33,16 @@ public class SuperGridRKd implements Eval {
         final LSTFilter lstFilter = new LSTFilter(helper);
         lstFilter.setKDCache(true);
 
-        STRegion bounds = helper.getBoundingBox();
-        STPoint minBounds = bounds.getMins();
-        STPoint maxBounds = bounds.getMaxs();
-
+        STPoint minBounds, maxBounds;
         float xStep, yStep, tStep;
         if("cabs".equals(dataType)){
             System.out.println("setting up data type: Cabs");
             Constants.setCabDefaults();
             float spaceGrid = 10; // 10 km
             float timeGrid = 60 * 60 * 24 * 7; // one week (in seconds)
+            STRegion bounds = helper.getBoundingBox();
+            minBounds = bounds.getMins();
+            maxBounds = bounds.getMaxs();
             STPoint cube = new STPoint(GPSLib.longOffsetFromDistance(minBounds, spaceGrid), GPSLib.latOffsetFromDistance(minBounds, spaceGrid), timeGrid);
             xStep = cube.getX();
             yStep = cube.getY();
@@ -52,6 +52,9 @@ public class SuperGridRKd implements Eval {
             Constants.setMobilityDefaults();
             float spaceGrid = 500; // 500m
             float timeGrid = 60 * 60 * 3; // 10 hours (in seconds)
+            STRegion bounds = helper.getBoundingBox();
+            minBounds = bounds.getMins();
+            maxBounds = bounds.getMaxs();
             STPoint cube = new STPoint(spaceGrid, spaceGrid, timeGrid);
             xStep = cube.getX();
             yStep = cube.getY();
@@ -70,11 +73,14 @@ public class SuperGridRKd implements Eval {
         int nonZeroCount = 0;
         int totalCount = 0;
         double val = 0.0;
+
+        List<STRegion> regions = new ArrayList<STRegion>();
         outerloop:
         for(float x = minBounds.getX(); x < maxBounds.getX(); x+= xStep){
             for(float y = minBounds.getY(); y < maxBounds.getY(); y+= yStep){
                 for(float t = minBounds.getT(); t < maxBounds.getT(); t+= tStep) {
                     STRegion region = new STRegion(new STPoint(x,y,t), new STPoint(x + xStep,y + yStep,t + tStep));
+                    regions.add(region);
                     MultiProfiler.startMark(stabFunc, region, x + "," + y + "," + t);
                     for(int i = 0; i < 3; i++){
                         val = lstFilter.windowPoK(region);
@@ -90,6 +96,10 @@ public class SuperGridRKd implements Eval {
             }
         }
         MultiProfiler.stopProfiling();
+
+        for(STRegion reg: regions){
+            System.out.println(reg);
+        }
 
         System.out.println("Loop count is : " + totalCount);
         List<Double> poks = new ArrayList<Double>();

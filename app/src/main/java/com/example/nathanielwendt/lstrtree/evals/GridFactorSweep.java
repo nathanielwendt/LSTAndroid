@@ -38,16 +38,16 @@ public class GridFactorSweep implements Eval {
         final LSTFilter lstFilter = new LSTFilter(helper);
         lstFilter.setKDCache(true);
 
-        STRegion bounds = helper.getBoundingBox();
-        STPoint minBounds = bounds.getMins();
-        STPoint maxBounds = bounds.getMaxs();
-
+        STPoint minBounds, maxBounds;
         float xStep, yStep, tStep;
         if("cabs".equals(dataType)){
             System.out.println("setting up data type: Cabs");
             Constants.setCabDefaults();
             float spaceGrid = 10; // 10 km
             float timeGrid = 60 * 60 * 24 * 7; // one week (in seconds)
+            STRegion bounds = helper.getBoundingBox();
+            minBounds = bounds.getMins();
+            maxBounds = bounds.getMaxs();
             STPoint cube = new STPoint(GPSLib.longOffsetFromDistance(minBounds, spaceGrid), GPSLib.latOffsetFromDistance(minBounds, spaceGrid), timeGrid);
             xStep = cube.getX();
             yStep = cube.getY();
@@ -55,8 +55,11 @@ public class GridFactorSweep implements Eval {
         } else {
             System.out.println("setting up data type: Mobility");
             Constants.setMobilityDefaults();
-            float spaceGrid = 500; // 1500m
+            float spaceGrid = 500; // 500m
             float timeGrid = 60 * 60 * 3; // 10 hours (in seconds)
+            STRegion bounds = helper.getBoundingBox();
+            minBounds = bounds.getMins();
+            maxBounds = bounds.getMaxs();
             STPoint cube = new STPoint(spaceGrid, spaceGrid, timeGrid);
             xStep = cube.getX();
             yStep = cube.getY();
