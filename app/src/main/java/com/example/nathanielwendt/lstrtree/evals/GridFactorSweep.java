@@ -34,6 +34,10 @@ public class GridFactorSweep implements Eval {
         final LSTFilter lstFilter = new LSTFilter(helper);
         lstFilter.setKDCache(true);
 
+        Constants.PoK.GRID_FACTOR = gridFactor;
+        Constants.PoK.GRID_DEFAULT = false;
+        System.out.println("setting grid factor to: " + gridFactor);
+
         STPoint minBounds, maxBounds;
         float xStep, yStep, tStep;
         if("cabs".equals(dataType)){
@@ -61,10 +65,6 @@ public class GridFactorSweep implements Eval {
             yStep = cube.getY();
             tStep = cube.getT();
         }
-
-        Constants.PoK.GRID_FACTOR = gridFactor;
-        Constants.PoK.GRID_DEFAULT = false;
-        System.out.println("setting grid factor to: " + gridFactor);
 
         Stabilizer stabFunc = new Stabilizer(){
             @Override

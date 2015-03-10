@@ -2,6 +2,7 @@ package com.example.nathanielwendt.lstrtree.evals;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.nathanielwendt.lstrtree.SQLiteRTree;
 import com.ut.mpc.setup.Constants;
@@ -73,7 +74,6 @@ public class SuperGridRKd implements Eval {
         int nonZeroCount = 0;
         int totalCount = 0;
         double val = 0.0;
-
         outerloop:
         for(float x = minBounds.getX(); x < maxBounds.getX(); x+= xStep){
             for(float y = minBounds.getY(); y < maxBounds.getY(); y+= yStep){
@@ -110,8 +110,13 @@ public class SuperGridRKd implements Eval {
             }
         }
         System.out.println("DONE PROFILING >>>>>>>");
-        System.out.println(poks);
-        System.out.println(numCandPoints);
+        for (int start = 0; start < poks.size(); start += 400) {
+            int end = Math.min(start + 400, poks.size());
+            List<Double> sublist = poks.subList(start, end);
+            System.out.println(sublist);
+        }
+        //Log.d("LST",poks.toString());
+        Log.d("LST",numCandPoints.toString());
     }
 
     @Override

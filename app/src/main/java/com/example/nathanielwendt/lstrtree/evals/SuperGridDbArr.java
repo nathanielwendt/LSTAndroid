@@ -109,7 +109,11 @@ public class SuperGridDbArr implements Eval {
             }
         }
         System.out.println("DONE PROFILING >>>>>>>");
-        System.out.println(poks);
+        for (int start = 0; start < poks.size(); start += 400) {
+            int end = Math.min(start + 400, poks.size());
+            List<Double> sublist = poks.subList(start, end);
+            System.out.println(sublist);
+        }
         System.out.println(numCandPoints);
     }
 
