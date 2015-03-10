@@ -30,10 +30,6 @@ public class GridFactorSweep implements Eval {
         String dataType = options.getString("dataType");
         int gridFactor = Integer.valueOf(options.getString("gridFactor"));
 
-        Constants.PoK.GRID_FACTOR = gridFactor;
-        Constants.PoK.GRID_DEFAULT = false;
-        System.out.println("setting grid factor to: " + gridFactor);
-
         SQLiteRTree helper = new SQLiteRTree(ctx, "RTreeMain");
         final LSTFilter lstFilter = new LSTFilter(helper);
         lstFilter.setKDCache(true);
@@ -65,6 +61,10 @@ public class GridFactorSweep implements Eval {
             yStep = cube.getY();
             tStep = cube.getT();
         }
+
+        Constants.PoK.GRID_FACTOR = gridFactor;
+        Constants.PoK.GRID_DEFAULT = false;
+        System.out.println("setting grid factor to: " + gridFactor);
 
         Stabilizer stabFunc = new Stabilizer(){
             @Override
