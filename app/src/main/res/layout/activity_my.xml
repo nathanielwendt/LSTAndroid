@@ -8,9 +8,40 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MyActivity">
 
-    <TextView
-        android:text="@string/hello_world"
+    <Button
+        android:id="@+id/stdtableOnload"
+        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:text="StdTable Load"
+        android:onClick="stdtableOnload" />
+
+    <Button
+        android:id="@+id/rtreeOnload"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@id/stdtableOnload"
+        android:text="RTree Load"
+        android:onClick="rtreeOnload" />
+
+    <Button
+        android:id="@+id/cloudOffload"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@id/rtreeOnload"
+        android:text="Cloud Offload"
+        android:onClick="cloudOffload" />
+
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@id/cloudOffload"
+        android:text="Clear all"
+        android:onClick="clearAll" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="new version"
+        />
 
 </RelativeLayout>

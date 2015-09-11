@@ -1,0 +1,41 @@
+apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "20.0.0"
+
+    defaultConfig {
+        applicationId "com.ut.mpc"
+        minSdkVersion 15
+        targetSdkVersion 19
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+retrolambda {
+    jdk "/Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Contents/Home"
+    oldJdk "/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home"
+    javaVersion JavaVersion.VERSION_1_7
+}
+
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'io.reactivex:rxandroid:1.0.1'
+    compile project(':pacolib')
+}

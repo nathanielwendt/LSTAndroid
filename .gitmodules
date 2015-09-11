@@ -1,3 +1,9 @@
 [submodule "app/LSTFilter"]
 	path = app/LSTFilter
 	url = https://github.com/nathanielwendt/LSTFilter.git
+[submodule "app/src/main/java/Etch"]
+	path = app/src/main/java/Etch
+	url = https://github.com/nathanielwendt/Etch.git
+[submodule "Etch"]
+	path = Etch
+	url = https://github.com/nathanielwendt/Etch.git

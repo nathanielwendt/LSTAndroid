@@ -3,7 +3,12 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/LSTAndroid.iml" filepath="$PROJECT_DIR$/LSTAndroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LSTRTree.iml" filepath="$PROJECT_DIR$/LSTRTree.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/contextengine/contextengine.iml" filepath="$PROJECT_DIR$/contextengine/contextengine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/demoapp1/demoapp1.iml" filepath="$PROJECT_DIR$/demoapp1/demoapp1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Etch/etch.iml" filepath="$PROJECT_DIR$/Etch/etch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pacolib/pacolib.iml" filepath="$PROJECT_DIR$/pacolib/pacolib.iml" />
     </modules>
   </component>
 </project>
