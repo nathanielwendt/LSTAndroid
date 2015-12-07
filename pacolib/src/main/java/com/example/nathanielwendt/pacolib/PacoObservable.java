@@ -16,7 +16,7 @@ public class PacoObservable<T> implements Serializable {
 
     private List<Func1<? super T, Boolean>> filterFuncs = new ArrayList<>();
     private List<Func1<? super T, ? extends R>> mapFuncs = new ArrayList<>();
-    private Action1<? super T> subscribeFunc;
+    //private PacoAction1<? super T> subscribeFunc;
 
     public List<Func1<? super T, ? extends R>> getMapFuncs() {
         return mapFuncs;
@@ -37,11 +37,11 @@ public class PacoObservable<T> implements Serializable {
     }
 
     public final PacoObservable<T> subscribe(final Action1<? super T> onNext) {
-        subscribeFunc = onNext;
+        //subscribeFunc = onNext;
         return this;
     }
 
-    public Action1<? super T> getSubscribeFunc(){
-        return subscribeFunc;
-    }
+   // public PacoAction1<? super T> getSubscribeFunc(){
+  //      return subscribeFunc;
+  //  }
 }

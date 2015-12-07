@@ -18,7 +18,7 @@
         android:layout_below="@+id/textView"
         android:layout_toRightOf="@+id/textView"
         android:layout_toEndOf="@+id/textView"
-        android:layout_marginTop="51dp" />
+        android:layout_marginTop="10dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -29,18 +29,40 @@
         android:layout_below="@+id/startpaco"
         android:layout_toRightOf="@+id/textView"
         android:layout_toEndOf="@+id/textView"
-        android:layout_marginTop="66dp" />
+        android:layout_marginTop="10dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="register"
-        android:onClick="register"
-        android:id="@+id/register"
+        android:text="registerAbstractLoc"
+        android:onClick="registerAbstractLoc"
+        android:id="@+id/registerAbstractLoc"
         android:layout_below="@+id/stoppaco"
         android:layout_toRightOf="@+id/textView"
         android:layout_toEndOf="@+id/textView"
-        android:layout_marginTop="74dp" />
+        android:layout_marginTop="10dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="registerSafety"
+        android:onClick="registerSafety"
+        android:id="@+id/registerSafety"
+        android:layout_below="@+id/registerAbstractLoc"
+        android:layout_toRightOf="@+id/textView"
+        android:layout_toEndOf="@+id/textView"
+        android:layout_marginTop="10dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="sendGpsSample"
+        android:onClick="sendGpsSample"
+        android:id="@+id/sendGpsSample"
+        android:layout_below="@+id/registerSafety"
+        android:layout_toRightOf="@+id/textView"
+        android:layout_toEndOf="@+id/textView"
+        android:layout_marginTop="10dp" />
 
 
 </RelativeLayout>

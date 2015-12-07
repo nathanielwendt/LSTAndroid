@@ -23,9 +23,11 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name="com.ut.mpc.lstrtree.LocationPoll"
-            android:exported="false" />
+        <receiver android:name=".lstrtree.LSTIndexReceiver" >
+            <intent-filter>
+                <action android:name="com.ut.mpc.lstindex" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

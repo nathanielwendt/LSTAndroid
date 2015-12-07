@@ -1,25 +1,18 @@
 package com.ut.mpc.lstrtree;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
 import com.ut.mpc.R;
 import com.ut.mpc.utils.LSTFilter;
 import com.ut.mpc.utils.STStorage;
 
 public class MyActivity extends Activity {
-    boolean locationUpdates = true;
-    GoogleApiClient mGoogleApiClient;
-    Location mLastLocation;
-    LocationRequest mLocationRequest;
     String TAG = "WALKABOUT";
     Intent mServiceIntent;
 
@@ -29,21 +22,33 @@ public class MyActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Intent intent = new Intent("com.ut.mpc.lstindex");
+        intent.putExtra("action", "insert");
+        intent.putExtra("latitude", (float) 20.0);
+        intent.putExtra("longitude", (float) 20.0);
+        intent.putExtra("timestamp", (float) 1000.0);
 
-
-            Uri allMessages = Uri.parse("content://sms/");
-            //Cursor cursor = managedQuery(allMessages, null, null, null, null); Both are same
-            Cursor cursor = this.getContentResolver().query(allMessages, null,
-                    null, null, null);
-
-            while (cursor.moveToNext()) {
-                for (int i = 0; i < cursor.getColumnCount(); i++) {
-                    Log.d(cursor.getColumnName(i) + "", cursor.getString(i) + "");
-                }
-                Log.d("One row finished",
-                        "**************************************************");
+        sendOrderedBroadcast(intent, null, new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Bundle results = getResultExtras(true);
+                System.out.println("result: " + results.getString("result"));
             }
+        }, null, Activity.RESULT_OK, null, null);
 
+        intent = new Intent("com.ut.mpc.lstindex");
+        intent.putExtra("action", "pointPoK");
+        intent.putExtra("longitude", (float) 20.0);
+        intent.putExtra("latitude", (float) 20.0);
+        intent.putExtra("timestamp", (float) 1000.0);
+
+        sendOrderedBroadcast(intent, null, new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Bundle results = getResultExtras(true);
+                System.out.println("pok: " + results.getDouble("pok"));
+            }
+        }, null, Activity.RESULT_OK, null, null);
 
 //        SQLiteRTree helper = new SQLiteRTree(this, "RTreeMain");
 //
@@ -113,96 +118,4 @@ public class MyActivity extends Activity {
         startIntent("clearstop");
     }
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        mGoogleApiClient.connect();
-//    }
-
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        stopLocationUpdates();
-//    }
-
-//    protected void stopLocationUpdates() {
-//        LocationServices.FusedLocationApi.removeLocationUpdates(
-//                mGoogleApiClient, this);
-//    }
-//
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        if (mGoogleApiClient.isConnected()) {
-//            startLocationUpdates();
-//        }
-//    }
-//
-//    protected void createLocationRequest() {
-//        mLocationRequest = new LocationRequest();
-//        mLocationRequest.setInterval(1000);
-//        mLocationRequest.setFastestInterval(500);
-//        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-//    }
-//
-//    protected synchronized void buildGoogleApiClient() {
-//        mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                .addConnectionCallbacks(this)
-//                .addOnConnectionFailedListener(this)
-//                .addApi(LocationServices.API)
-//                .build();
-//    }
-//
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.my, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
-//
-//    @Override
-//    public void onConnected(Bundle bundle) {
-//        Log.d(TAG, "connected");
-//        if(locationUpdates){
-//            startLocationUpdates();
-//        }
-//    }
-//
-//    protected void startLocationUpdates() {
-//        LocationServices.FusedLocationApi.requestLocationUpdates(
-//                mGoogleApiClient, mLocationRequest, this);
-//    }
-//
-//    @Override
-//    public void onConnectionSuspended(int i) {
-//
-//    }
-//
-//    @Override
-//    public void onConnectionFailed(ConnectionResult connectionResult) {
-//        throw new RuntimeException("failed to connect to location services");
-//    }
-//
-//    @Override
-//    public void onLocationChanged(Location location) {
-//        STPoint point = new STPoint((float) location.getLongitude(),
-//                                    (float) location.getLatitude(),
-//                                    System.currentTimeMillis());
-//        if(lstFilter != null) {
-//            lstFilter.insert(point);
-//        }
-//        Log.d(TAG, point.toString());
-//    }
 }

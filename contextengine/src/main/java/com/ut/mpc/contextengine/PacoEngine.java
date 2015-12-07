@@ -8,51 +8,71 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.example.nathanielwendt.pacolib.ContextItem;
-import com.example.nathanielwendt.pacolib.PacoObservable;
+import com.example.nathanielwendt.pacolib.PacoConsts;
+import com.example.nathanielwendt.pacolib.samples.Sample;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import rx.Observable;
-import rx.Subscriber;
-import rx.functions.Func1;
+import java.util.Map;
 
 /**
  * Created by nathanielwendt on 8/18/15.
  */
 public class PacoEngine extends Service {
-
     private final String TAG = "PacoEngine";
-    private String ENGINE_POSTFIX = ".CONTEXT_ENGINE";
-    RegisterReceiver regReceiver;
-
-    Observable<ContextItem> sensorObservable = Observable.create(
-            new Observable.OnSubscribe<ContextItem>() {
-                @Override
-                public void call(Subscriber<? super ContextItem> sub) {
-                    sub.onNext(new ContextItem(10));
-                    sub.onNext(new ContextItem(20));
-                    sub.onNext(new ContextItem(10));
-                    sub.onCompleted();
-                }
-            }
-    );
+    private BroadcastReceiver pacoReceiver;
+    private BroadcastReceiver gpsReceiver;
+    private BroadcastReceiver appStatesReceiver;
+    private BroadcastReceiver accelReceiver;
+    private BroadcastReceiver bluetoothReceiver;
+    private BroadcastReceiver commReceiver;
+    private CabSubscriptions cabSubs = new CabSubscriptions();
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "Starting paco engine");
-        IntentFilter filter = new IntentFilter(RegisterReceiver.ACTION_RESP);
+        IntentFilter filter = new IntentFilter(PacoConsts.CONTEXT_ENGINE);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
-        regReceiver = new RegisterReceiver();
-        registerReceiver(regReceiver, filter);
+        pacoReceiver = new PacoReceiver(cabSubs);
+        registerReceiver(pacoReceiver, filter);
+
+        IntentFilter gpsFilter = new IntentFilter("sensors.gps");
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        gpsReceiver = new PacoEngineSensorReceiver(this, cabSubs, PacoConsts.Sensors.Gps);
+        registerReceiver(gpsReceiver, gpsFilter);
+
+        IntentFilter appStatesFilter = new IntentFilter("sensors.appstate");
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        appStatesReceiver = new PacoEngineSensorReceiver(this, cabSubs, PacoConsts.Sensors.ApplicationStates);
+        registerReceiver(appStatesReceiver, appStatesFilter);
+
+        IntentFilter accelFilter = new IntentFilter("sensors.accel");
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        accelReceiver = new PacoEngineSensorReceiver(this, cabSubs, PacoConsts.Sensors.Accelerometer);
+        registerReceiver(accelReceiver, accelFilter);
+
+        IntentFilter bluetoothFilter = new IntentFilter("sensors.bluetooth");
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        bluetoothReceiver = new PacoEngineSensorReceiver(this, cabSubs, PacoConsts.Sensors.Bluetooth);
+        registerReceiver(bluetoothReceiver, bluetoothFilter);
+
+        IntentFilter commFilter = new IntentFilter("sensors.comm");
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        commReceiver = new PacoEngineSensorReceiver(this, cabSubs, PacoConsts.Sensors.Communication);
+        registerReceiver(commReceiver, commFilter);
 
         return Service.START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        unregisterReceiver(regReceiver);
+        unregisterReceiver(pacoReceiver);
+        unregisterReceiver(gpsReceiver);
+        unregisterReceiver(appStatesReceiver);
+        unregisterReceiver(accelReceiver);
+        unregisterReceiver(bluetoothReceiver);
+        unregisterReceiver(commReceiver);
     }
 
     @Override
@@ -60,53 +80,105 @@ public class PacoEngine extends Service {
         return null;
     }
 
-    //Incoming registration requests come through this regReceiver
-    public class RegisterReceiver extends BroadcastReceiver {
-        public static final String ACTION_RESP =
-                "com.ut.mpc.CONTEXT_ENGINE";
+    public class PacoEngineSensorReceiver extends BroadcastReceiver {
+        private Context ctx;
+        private CabSubscriptions cabSubs;
+        private String identifier;
+
+        public PacoEngineSensorReceiver(Context ctx, CabSubscriptions cabSubs, String identifier){
+            this.ctx = ctx;
+            this.cabSubs = cabSubs;
+            this.identifier = identifier;
+        }
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "Registering new application");
-            String action = intent.getStringExtra("action");
-            if(("register").equals(action)){
-                String packageId = intent.getStringExtra("packageId");
-                List<PacoObservable> observables = (ArrayList <PacoObservable>) intent.getSerializableExtra("observables");
+            Log.d(identifier,"received sample");
+            Intent outIntent = new Intent();
 
-                int index = 0;
-                for(PacoObservable obs : observables){
-                    Observable<ContextItem> temp = Observable.empty();
-                    temp = temp.mergeWith(sensorObservable);
-
-                    List<Func1> filterFuncs = obs.getFilterFuncs();
-                    List<Func1> mapFuncs = obs.getMapFuncs();
-
-                    for(int i =0; i < filterFuncs.size(); i++){
-                        temp = temp.filter(filterFuncs.get(i));
-                    }
-
-                    for(int i =0; i < mapFuncs.size(); i++){
-                        temp = temp.map(mapFuncs.get(i));
-                    }
-
-                    final int tempIndex = index;
-                    temp.subscribe(contextItem -> broadcastIntent(packageId,tempIndex,contextItem));
-                    //Observable.merge(temp, sensorObservable).subscribe(contextItem -> broadcastIntent(packageId,tempIndex,contextItem));
-                    index++;
-                }
+            for(CabIdentifier cabIdentifier : cabSubs.get(identifier)){
+                outIntent.setAction(cabIdentifier.cabId);
+                outIntent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+                outIntent.putExtra("action", PacoConsts.Actions.PacoUpdate);
+                Sample sample = intent.getParcelableExtra("sample");
+                outIntent.putExtra("sample", sample);
+                ctx.sendBroadcast(outIntent);
             }
         }
     }
 
-    // broadcast a custom intent.
-    public void broadcastIntent(String appId, int obsId, ContextItem contextItem){
-        Log.d(TAG, "broadcasting intent to: " + appId + " and obsId: " + obsId);
-        Intent intent = new Intent();
-        intent.setAction(appId + ENGINE_POSTFIX);
-        intent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-        intent.putExtra("action", "update");
-        intent.putExtra("context", contextItem);
-        intent.putExtra("obsIndex", obsId);
-        sendBroadcast(intent);
+    //Accelerometer receiver, buffer the observable?
+
+    //Incoming registration requests come through this regReceiver
+    public static class PacoReceiver extends BroadcastReceiver {
+        CabSubscriptions cabSubs;
+
+        public PacoReceiver(CabSubscriptions cabSubs){
+            this.cabSubs = cabSubs;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d("PacoReceiver", "received incoming message to Paco Engine");
+            String action = intent.getStringExtra("action");
+            if(action.equals(PacoConsts.Actions.CabPacoReg)){
+                String cabId = (String) intent.getStringExtra("cabId");
+                String displayName = (String) intent.getStringExtra("displayName");
+                int numSensors = (int) intent.getIntExtra("numSensors", 0);
+                for(int i = 1; i <= numSensors; i++){
+                    String sensor = intent.getStringExtra("sensor" + String.valueOf(i));
+                    cabSubs.add(cabId, displayName, sensor);
+                }
+            }
+
+        }
+    }
+
+    //Manages cab subscriptions
+    public class CabSubscriptions {
+        private Map<String, List<CabIdentifier>> cabSubs = new HashMap<>();
+
+        public void add(String cabId, String displayName, String sensorName){
+            CabIdentifier identifier = new CabIdentifier(cabId, displayName);
+            List<CabIdentifier> cabs = cabSubs.get(sensorName);
+            if(cabs == null){
+                cabs = new ArrayList<CabIdentifier>();
+                cabs.add(identifier);
+                cabSubs.put(sensorName, cabs);
+            } else {
+                if(!cabs.contains(identifier)){
+                    cabs.add(identifier);
+                }
+            }
+        }
+
+        public List<CabIdentifier> get(String sensorName){
+            List<CabIdentifier> cabs;
+            cabs = cabSubs.get(sensorName);
+            if(cabs == null){
+                return new ArrayList<CabIdentifier>();
+            } else {
+                return cabs;
+            }
+        }
+    }
+
+    public class CabIdentifier {
+        public String cabId;
+        public String displayName;
+
+        public CabIdentifier(String cabId, String displayName){
+            this.cabId = cabId;
+            this.displayName = displayName;
+        }
+
+        @Override
+        public boolean equals(Object other){
+            if(other == null) { return false; }
+            if(other == this) { return true; }
+            if (!(other instanceof CabIdentifier)) return false;
+            CabIdentifier otherCabIdentifier = (CabIdentifier) other;
+            return otherCabIdentifier.cabId.equals(this.cabId) && otherCabIdentifier.displayName.equals(this.displayName);
+        }
     }
 }

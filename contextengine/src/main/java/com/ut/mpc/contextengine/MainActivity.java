@@ -9,58 +9,31 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.nathanielwendt.contextengine.R;
-
-import rx.Observable;
-import rx.Subscriber;
+import com.example.nathanielwendt.pacolib.PacoConsts;
+import com.example.nathanielwendt.pacolib.samples.GpsData;
+import com.example.nathanielwendt.pacolib.samples.SensorSample;
+import com.ut.mpc.contextengine.cabs.AbstractLocation;
+import com.ut.mpc.contextengine.cabs.Safety;
 
 public class MainActivity extends Activity {
     private final String TAG = "PacoMainActivity";
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Observable<String> myObservable = Observable.create(
-                new Observable.OnSubscribe<String>() {
-                    @Override
-                    public void call(Subscriber<? super String> sub) {
-                        sub.onNext("Hello, world!");
-                        sub.onNext("Hi");
-                        sub.onCompleted();
-                    }
-                }
-        );
-
-        Observable<String> tempObs = Observable.just("Hi");
-
-       // Observable.merge(tempObs, myObservable);
-        tempObs = tempObs.mergeWith(myObservable);
-        tempObs = tempObs.filter(x -> x.equals("Hi"));
-
-        tempObs.subscribe(x -> System.out.println("woo: > " + x));
-
-        //Observable.merge(tempObs, myObservable).subscribe(str -> System.out.println("woo: " + str));
-        //tempObs.mergeWith(myObservable).subscribe(x -> System.out.println(x));
-
-
-
-
-        //broadcastIntent("10");
-        //broadcastIntent("20");
-        //broadcastIntent("10");
-        //broadcastIntent("10");
     }
 
     public void startPaco(View v){
         startService(new Intent(this, PacoEngine.class));
     }
 
-    public void register(View v){
-        MyReceiver.setup();
-        MyReceiver.setPackageId("com.ut.mpc.contextengine");
-        MyReceiver.register(getApplicationContext());
+    public void registerAbstractLoc(View v){
+        startService(new Intent(this, AbstractLocation.class));
+    }
+
+    public void registerSafety(View v){
+        startService(new Intent(this, Safety.class));
     }
 
     public void stopPaco(View v){
@@ -68,17 +41,19 @@ public class MainActivity extends Activity {
         stopService(new Intent(this, PacoEngine.class));
     }
 
-    // broadcast a custom intent.
-    public void broadcastIntent(String val){
-        Log.d(TAG, "broadcasting intent");
+    public void sendGpsSample(View v){
+        Log.d(TAG, "sending gps sample");
         Intent intent = new Intent();
-        intent.setAction("com.ut.mpc.CONTEXT_ENGINE");
+        intent.setAction("demo.temp.test");
         intent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-        intent.putExtra("test", val);
+        GpsData data = new GpsData();
+        data.latitude = 30.342155;
+        data.longitude = -97.7291139999999;
+
+        SensorSample sample = new SensorSample(0.8, PacoConsts.Sensors.Gps, data);
+        intent.putExtra("sample", sample);
         sendBroadcast(intent);
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

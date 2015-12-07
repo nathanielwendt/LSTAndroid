@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.nathanielwendt.contextengine" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -17,18 +19,21 @@
             </intent-filter>
         </activity>
 
-
-        <receiver android:name="com.ut.mpc.contextengine.MyReceiver">
-            <intent-filter>
-                <action android:name="com.ut.mpc.contextengine.CONTEXT_ENGINE">
-                </action>
-            </intent-filter>
-        </receiver>
-
         <service
             android:name="com.ut.mpc.contextengine.PacoEngine"
             android:label="Paco Engine">
         </service>
+
+        <service
+            android:name="com.ut.mpc.contextengine.cabs.AbstractLocation"
+            android:label="Abstract Location">
+        </service>
+
+        <service
+            android:name="com.ut.mpc.contextengine.cabs.Safety"
+            android:label="Safety">
+        </service>
+
     </application>
 
 </manifest>
