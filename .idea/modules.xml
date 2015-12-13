@@ -4,7 +4,12 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/LSTAndroid.iml" filepath="$PROJECT_DIR$/LSTAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/LSTRTree.iml" filepath="$PROJECT_DIR$/LSTRTree.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android-bankdroid/android-bankdroid.iml" filepath="$PROJECT_DIR$/android-bankdroid/android-bankdroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bankapp/bankapp.iml" filepath="$PROJECT_DIR$/bankapp/bankapp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bankdroid-core/bankdroid-core.iml" filepath="$PROJECT_DIR$/bankdroid-core/bankdroid-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bankdroid-interface/bankdroid-interface.iml" filepath="$PROJECT_DIR$/bankdroid-interface/bankdroid-interface.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bankdroid-legacy/bankdroid-legacy.iml" filepath="$PROJECT_DIR$/bankdroid-legacy/bankdroid-legacy.iml" />
       <module fileurl="file://$PROJECT_DIR$/contextengine/contextengine.iml" filepath="$PROJECT_DIR$/contextengine/contextengine.iml" />
       <module fileurl="file://$PROJECT_DIR$/demoapp1/demoapp1.iml" filepath="$PROJECT_DIR$/demoapp1/demoapp1.iml" />
       <module fileurl="file://$PROJECT_DIR$/Etch/etch.iml" filepath="$PROJECT_DIR$/Etch/etch.iml" />
@@ -12,4 +17,3 @@
     </modules>
   </component>
 </project>
-

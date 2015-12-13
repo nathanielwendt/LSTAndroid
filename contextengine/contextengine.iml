@@ -71,7 +71,6 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/dependency-cache" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/dex" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/dex-cache" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/io.reactivex/rxandroid/1.0.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jacoco" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/javaResources" />
@@ -92,8 +91,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="rxandroid-1.0.1" level="project" />
     <orderEntry type="library" exported="" name="rxjava-1.0.13" level="project" />
-    <orderEntry type="library" exported="" name="gson-2.2.4" level="project" />
     <orderEntry type="library" exported="" name="httpclient-4.3.6" level="project" />
+    <orderEntry type="library" exported="" name="gson-2.2.4" level="project" />
     <orderEntry type="library" exported="" name="json-simple-1.1" level="project" />
     <orderEntry type="library" exported="" name="android-async-http-1.4.9" level="project" />
     <orderEntry type="module" module-name="pacolib" exported="" />
